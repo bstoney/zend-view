@@ -67,7 +67,9 @@ have values assigned. This is how you do that:
 This will render the output:
 
 ```html
-<a href="/news/details/42">News Index</a>
+<a href="/news/details/42">
+    Details of News #42
+</a>
 ```
 
 ## Query String Arguments
@@ -235,4 +237,49 @@ the value of the `$reuseMatchedParams` flag:
 $this->url('news', ['action' => 'archive'], null, true);
 // is equal to
 $this->url('news', ['action' => 'archive'], true);
+```
+
+## Child Routes
+
+To create a string representation of a child route the `$name` argument must include the names of the parent route and the child route separated by a slash (`/`).
+
+Extending the route configuration as defined above to include a child route, for example to display the metadata of a news entry:
+
+```php
+'router' => [
+    'routes' => [
+        'news' => [
+            'type'    => 'segment',
+            'options' => [
+            // ...
+            ],
+            'may_terminate' => true,
+            'child_routes'  => [
+                'meta' => [
+                    'type'    => 'segment',
+                    'options' => [
+                        'route'       => '/meta',
+                        'defaults'    => [
+                            'action'     => 'meta',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+],
+```
+
+```php
+<a href="<?= $this->url('news/meta', ['action' => 'details', 'id' => 42]); ?>">
+    Metadata of News #42
+</a>
+```
+
+This will render the output:
+
+```html
+<a href="/news/details/42/meta">
+    Metadata of News #42
+</a>
 ```
